@@ -1,0 +1,45 @@
+version: "3.8"
+services:
+  postgres:
+    container_name: postgresdb_quotes
+    image: postgres:latest
+    volumes:
+      - ./database:/var/lib/postgresql/database
+      - ./database/dump.sql:/docker-entrypoint-initdb.d/dump.sql
+    env_file:
+      - ./env/postgres.env
+    environment:
+       POSTGRES_INITDB_ARGS: "--data-checksums"
+    network_mode: host
+  backend:
+    container_name: backend-quotes
+    image: openjdk:11
+    build:
+      context: ./backend
+#    command: ["bash", "-c", "./app/gradlew clean build"]
+    command: ["./app/gradlew", "clean", "build"]
+    volumes:
+      - ./backend:/app
+#    command:  ["java", "-jar", "build/libs/quotes-0.0.1-SNAPSHOT.jar"]
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/quotes-db
+      - jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=adminpas
+    depends_on: [postgres]
+  frontend:
+    container_name: frontend_quotes
+    image: nginx:alpine
+    build:
+      context: ./frontend
+    volumes:
+      - /.frontend/default.conf:/etc/nginx/conf.d
+      - /.frontend/index.html:/usr/share/nginx/html
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+volumes:
+  database:
