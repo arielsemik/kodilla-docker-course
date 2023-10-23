@@ -1,0 +1,78 @@
+version: '3.1'
+
+services:
+
+  db:
+    image: mysql:latest
+    command: --default-authentication-plugin=caching_sha2_password
+    restart: always
+    env_file:
+      - .env
+#    environment:
+#      - MYSQL_USER=admin
+#      - MYSQL_PASSWORD=password
+#      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+#      - MYSQL_HOST=m1ysqlh-ost
+    ports:
+      - "3306:3306"
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8083:8083"
+
+
+  rabbitmq:
+    image: rabbitmq:latest
+    container_name: my-rabbitmq
+    env_file:
+      - ./.env
+    ports:
+      - ${RABBITMQ_PORT}:${RABBITMQ_PORT}  # Port do komunikacji AMQP
+#      - "15672:15672"  # Port do interfejsu zarządzania (RabbitMQ Management)
+
+#    volumes:
+#      - rabbitmq_data:/var/lib/rabbitmq  # Katalog danych RabbitMQ
+  products_api:
+    container_name: products_api
+    image: openjdk:11
+    build:
+      context: ./products-api/
+      dockerfile: Dockerfile
+
+    command: ["java", "-jar", "/app/build/libs/products-api-0.0.1-SNAPSHOT.jar"]
+    ports:
+      - "8080:8080"
+#    env_file:
+#      - .env
+    environment:
+      - MYSQL_PORT=3306
+      - MYSQL_HOST=m1ysqlh-ost
+      - MYSQL_USERNAME=admin
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=mysql_db
+      - RABBITMQ_HOST=${RABBITMQ_HOST}
+      - RABBITMQ_PORT=${RABBITMQ_PORT}
+    depends_on:
+      - db
+      - rabbitmq
+#  store_frontend:
+#    container_name: store_frontend
+#    image: node:alpine
+#    working_dir: /app
+#    ports:
+#      - "3000:3000"
+#    volumes:
+#      - ./store_frontend:/app
+#    command: ["npm", "run", "start"]
+#  notifications:
+#    container_name: notifications_api
+#    image: node:alpine
+#    ports:
+#      - "5001:5001"
+#    working_dir: /usr/src/app
+#    volumes:
+#      - ./stored_frontend/usr/src/app:/app
+#
+volumes:
+  db:
