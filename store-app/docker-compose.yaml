@@ -8,11 +8,13 @@ services:
     restart: always
     env_file:
       - .env
-#    environment:
-#      - MYSQL_USER=admin
-#      - MYSQL_PASSWORD=password
-#      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-#      - MYSQL_HOST=m1ysqlh-ost
+    environment:
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_PORT=${MYSQL_PORT}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
     ports:
       - "3306:3306"
   adminer:
@@ -43,14 +45,14 @@ services:
     command: ["java", "-jar", "/app/build/libs/products-api-0.0.1-SNAPSHOT.jar"]
     ports:
       - "8080:8080"
-#    env_file:
-#      - .env
+    env_file:
+      - .env
     environment:
-      - MYSQL_PORT=3306
-      - MYSQL_HOST=m1ysqlh-ost
-      - MYSQL_USERNAME=admin
-      - MYSQL_PASSWORD=password
-      - MYSQL_DATABASE=mysql_db
+      - MYSQL_PORT=${MYSQL_PORT}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_USERNAME=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
       - RABBITMQ_HOST=${RABBITMQ_HOST}
       - RABBITMQ_PORT=${RABBITMQ_PORT}
     depends_on:
