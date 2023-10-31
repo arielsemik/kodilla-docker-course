@@ -7,8 +7,7 @@ const Todo = require("./models/todo");
 
 const app = express();
 
-const MONGO_URI = "mongodb://mongo-db:27017/todo-backend-app";
-cd
+const MONGO_URI = 'mongodb://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGODB_HOST}/todos-app?authSource=admin';
 app.use(bodyParser.json());
 app.use(cors());
 

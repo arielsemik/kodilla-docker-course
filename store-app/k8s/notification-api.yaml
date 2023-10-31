@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      component: notification-api
+  template:
+    metadata:
+      labels:
+        component: notification-api
+    spec:
+      containers:
+        - name: store-notification-api
+          image: asemikitm/store-notification-api:1.0.0
+          ports:
+            - containerPort: 5001
+          env:
+            - name: RABBITMQ_QUEUE_NAME
+              value: rabbitqueue
+            - name: RABBITMQ_HOST
+              value: rabbitmq-cluster-ip-service
+            - name: RABBITMQ_PORT
+              value: "5672"

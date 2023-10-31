@@ -10,4 +10,4 @@ RUN ./gradlew clean build
 
 
 
-#CMD ["java", "-jar", "/app/build/libs/products-api-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-jar", "/app/build/libs/products-api-0.0.1-SNAPSHOT.jar"]
